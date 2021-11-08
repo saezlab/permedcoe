@@ -1,0 +1,14 @@
+Bootstrap: library
+From: pablormier/permedcoe/r-base:4.1.2
+
+%files
+    ./decoupler_bb.R
+
+%post
+    apt -y install build-essential libcurl4-openssl-dev libxml2-dev libssl-dev libpng-dev
+    R -e 'install.packages("BiocManager")'
+    R -e 'BiocManager::install(c("decoupleR","dorothea","readr","dplyr","tibble","optparse"))'
+
+%runscript
+    exec Rscript --vanilla decoupler_bb.R "${@}"
+

@@ -1,0 +1,17 @@
+Bootstrap: library
+From: ubuntu:16.04
+
+%post
+    apt -y update -qq
+    apt -y install --no-install-recommends wget build-essential software-properties-common dirmngr gnupg apt-transport-https ca-certificates
+    apt-key del "E298 A3A8 25C0 D65D FD57 CBB6 5171 6619 E084 DAB9"
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc
+    add-apt-repository "deb https://cloud.r-project.org/bin/linux/ubuntu xenial-cran40/"
+    apt -y update -qq
+    apt -y install --no-install-recommends r-base r-base-dev
+
+%environment
+    export LC_ALL=C
+    export R_LIBS="/usr/local/lib/R/site-library:/usr/lib/R/site-library:/usr/lib/R/library"
+

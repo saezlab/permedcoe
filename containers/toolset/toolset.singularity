@@ -1,0 +1,11 @@
+Bootstrap: library
+From: pablormier/permedcoe/saeztools:1.0.0
+
+%files
+    ./scripts/decoupler.R /opt
+
+%apprun decoupler
+    exec Rscript --vanilla /opt/decoupler.R "${@}"
+
+%test
+    exec Rscript --vanilla /opt/decoupler.R --help

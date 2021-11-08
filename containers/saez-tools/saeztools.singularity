@@ -1,0 +1,9 @@
+Bootstrap: library
+From: pablormier/permedcoe/r-base:4.1.2
+
+%post
+    apt -y install build-essential libcurl4-openssl-dev libxml2-dev libssl-dev libpng-dev
+    R -e 'install.packages(c("devtools","BiocManager"))'
+    R -e 'BiocManager::install(c("tidyverse","dorothea","decoupleR","cosmosR","optparse"))'
+
+
