@@ -1,0 +1,3 @@
+[submodule "building-blocks/api"]
+	path = building-blocks/api
+	url = https://github.com/PerMedCoE/permedcoe.git
