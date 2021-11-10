@@ -9,7 +9,7 @@ from permedcoe import FILE_OUT
 
 @container(engine="SINGULARITY", image="toolset.sif")
 @binary(binary="Rscript --vanilla /opt/decoupler.R")
-@task(dataset=DIRECTORY_IN, result=FILE_OUT)
+@task(data=DIRECTORY_IN, result=FILE_OUT)
 def decoupler_viper(data=None, result=None):
     """
     The Definition is equal to:
@@ -27,4 +27,4 @@ def invoke(input, output, config):
     Returns:
         None
     """
-    decoupler_viper(data=input[0], result=input[1])
+    decoupler_viper(data=input[0], result=output[0])
