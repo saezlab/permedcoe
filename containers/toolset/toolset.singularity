@@ -3,9 +3,13 @@ From: pablormier/permedcoe/saeztools:1.0.1
 
 %files
     ./scripts/decoupler.R /opt
+    ./scripts/progeny.R /opt
 
 %apprun decoupler
     exec Rscript --vanilla /opt/decoupler.R "${@}"
+
+%apprun progeny
+    exec Rscript --vanilla /opt/progeny.R "${@}"
 
 %test
     exec Rscript --vanilla /opt/decoupler.R --help
