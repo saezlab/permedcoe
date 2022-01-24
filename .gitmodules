@@ -1,3 +1,6 @@
 [submodule "building-blocks/api"]
 	path = building-blocks/api
 	url = https://github.com/PerMedCoE/permedcoe.git
+[submodule "building-blocks/apidocs"]
+	path = building-blocks/apidocs
+	url = https://github.com/PerMedCoE/permedcoe_doc.git
