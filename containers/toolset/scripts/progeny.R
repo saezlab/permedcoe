@@ -16,6 +16,8 @@ parser <- OptionParser(
     make_option(c("-s", "--scale"), default=T, help="Scale the data. Default = TRUE"),
     make_option(c("-e", "--exclude_cols"), default="GENE_title", help="Exclude columns containing the given string. Default = 'GENE_title'"),
     make_option(c("-t", "--tsv"), default=F, help="Assume file is TSV instead of CSV. Default = FALSE"),
+	make_option(c("-p", "--perms"), default=2000, help="Number of permutations to estimate the null distribution. Default = 2000"),
+	make_option(c("-z", "--zscore"), default=T, help="Get Z-scores. Default = TRUE"),
     make_option(c("-v", "--verbose"), default=F, help="Verbosity (default False)")
   ),
   add_help_option = T,
@@ -57,7 +59,9 @@ df_progeny_score <- df %>%
   progeny::progeny(., scale=arguments$options$scale, 
                    organism=arguments$options$organism, 
                    top = arguments$options$ntop, 
-                   verbose = arguments$options$verbose) %>%
+                   verbose = arguments$options$verbose,
+				   z_score = arguments$options$zscore,
+				   perm = arguments$options$perms) %>%
   as_tibble()
 
 
