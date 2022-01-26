@@ -11,7 +11,7 @@ parser <- OptionParser(
   usage = "usage: %prog expression_csv_file_or_url output_file [options]",
   option_list = list(
     make_option(c("-o", "--organism"), default="Human", help="Organism (Mouse, Human). Default = Human"),
-    make_option(c("-i", "--ntop"), default=100, help="Number of top genes used for estimation of TF activities. Default = 100"),
+    make_option(c("-i", "--ntop"), default=250, help="Number of top genes used for estimation of TF activities. Default = 100"),
     make_option(c("-c", "--col_genes"), default="GENE_SYMBOLS", help="Name of the column containing the gene symbols. Default = GENE_SYMBOLS"),
     make_option(c("-s", "--scale"), default=T, help="Scale the data. Default = TRUE"),
     make_option(c("-e", "--exclude_cols"), default="GENE_title", help="Exclude columns containing the given string. Default = 'GENE_title'"),
