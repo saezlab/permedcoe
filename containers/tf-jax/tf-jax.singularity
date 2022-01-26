@@ -1,0 +1,22 @@
+Bootstrap: docker
+
+From: continuumio/miniconda3
+
+%post
+    /opt/conda/bin/conda install -y pandas tensorflow
+    /opt/conda/bin/conda install -c conda-forge jax=0.2.27
+
+
+%runscript
+    exec /opt/conda/bin/"$@"
+
+%test
+    if /opt/conda/bin/python -c "import jax; print(jax.__version__)" | grep -q "0.2.27"; then
+        echo "JAX correctly installed"
+    else
+        echo "There is an issue with JAX installation!"
+    fi
+
+
+
+
