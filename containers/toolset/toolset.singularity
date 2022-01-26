@@ -2,14 +2,20 @@ Bootstrap: library
 From: pablormier/permedcoe/saeztools:1.0.1
 
 %files
-    ./scripts/decoupler.R /opt
+    ./scripts/tf_activity.R /opt
     ./scripts/progeny.R /opt
+	./scripts/normalize.R /opt
 
-%apprun decoupler
-    exec Rscript --vanilla /opt/decoupler.R "${@}"
+%apprun tfactivity
+    exec Rscript --vanilla /opt/tf_activity.R "${@}"
+	
+%apprun normalize
+    exec Rscript --vanilla /opt/normalize.R "${@}"
 
 %apprun progeny
     exec Rscript --vanilla /opt/progeny.R "${@}"
 
 %test
-    exec Rscript --vanilla /opt/decoupler.R --help
+    exec Rscript --vanilla /opt/tf_activity.R --help
+	exec Rscript --vanilla /opt/normalize.R --help
+	exec Rscript --vanilla /opt/progeny.R --help
