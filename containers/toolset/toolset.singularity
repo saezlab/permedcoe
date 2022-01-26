@@ -2,12 +2,12 @@ Bootstrap: library
 From: pablormier/permedcoe/saeztools:1.0.1
 
 %files
-    ./scripts/tf_activity.R /opt
+    ./scripts/tf_enrichment.R /opt
     ./scripts/progeny.R /opt
 	./scripts/normalize.R /opt
 
-%apprun tfactivity
-    exec Rscript --vanilla /opt/tf_activity.R "${@}"
+%apprun tfenrichment
+    exec Rscript --vanilla /opt/tf_enrichment.R "${@}"
 	
 %apprun normalize
     exec Rscript --vanilla /opt/normalize.R "${@}"
@@ -16,6 +16,6 @@ From: pablormier/permedcoe/saeztools:1.0.1
     exec Rscript --vanilla /opt/progeny.R "${@}"
 
 %test
-    exec Rscript --vanilla /opt/tf_activity.R --help
+    exec Rscript --vanilla /opt/tf_enrichment.R --help
 	exec Rscript --vanilla /opt/normalize.R --help
 	exec Rscript --vanilla /opt/progeny.R --help
