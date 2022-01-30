@@ -5,7 +5,9 @@ The idea of this container is to modularize the access to the different tools fr
 
 ## Build the container
 
+```
 > sudo singularity build toolset.sif toolset.singularity
+```
 
 
 ## Usage examples

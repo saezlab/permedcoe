@@ -1,16 +1,16 @@
 Bootstrap: library
-From: pablormier/permedcoe/saeztools:1.0.1
+From: pablormier/permedcoe/saeztools:1.0.0
 
 %files
     ./scripts/tf_enrichment.R /opt
     ./scripts/progeny.R /opt
-	./scripts/normalize.R /opt
+	./scripts/preprocess.R /opt
 
 %apprun tfenrichment
     exec Rscript --vanilla /opt/tf_enrichment.R "${@}"
 	
-%apprun normalize
-    exec Rscript --vanilla /opt/normalize.R "${@}"
+%apprun preprocess
+    exec Rscript --vanilla /opt/preprocess.R "${@}"
 
 %apprun progeny
     exec Rscript --vanilla /opt/progeny.R "${@}"

@@ -2,7 +2,9 @@ Repository with base R 4.1.2 and main R packages installed for using SaezLab too
 
 Build
 
+```
 > sudo singularity build saeztools.sif saeztools.singularity
+```
 
 Test
 
@@ -16,6 +18,6 @@ Sign
 ```
 > singularity key list
 > singularity sign --keyidx N saeztools.sif
-> singularity push saeztools.sif library://pablormier/permedcoe/saeztools:1.0.0
+> singularity push saeztools.sif library://pablormier/permedcoe/saeztools:1.0.2
 
 ```

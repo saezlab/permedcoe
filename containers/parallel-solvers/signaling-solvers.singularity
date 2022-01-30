@@ -1,0 +1,23 @@
+Bootstrap: library
+From: ubuntu:20.04
+
+
+%files
+    ./carnival.tar.gz /opt/
+    ./cellnopt.tar.gz /opt/
+
+%post
+    apt -y update -qq && apt install -y software-properties-common
+    add-apt-repository universe && apt -y update
+    apt -y install g++ gcc make cmake mpich libhdf5-dev
+    tar -xvf /opt/carnival.tar.gz -C /opt/.
+    tar -xvf /opt/cellnopt.tar.gz -C /opt/.    
+    cd opt/cellnopt && make example1
+    cd ../carnival && make aco_toymodel && make aco_carnival
+    
+%apprun cellnopt
+    /opt/cellnopt/build/example1 "${@}"
+
+%apprun carnival
+    /opt/carnival/build/aco "${@}"
+
