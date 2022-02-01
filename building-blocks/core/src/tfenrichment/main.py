@@ -16,6 +16,9 @@ from permedcoe import DIRECTORY_INOUT  # To define directory type and direction
 # Other permedcoe available functionalities
 from permedcoe import get_environment  # Get variables from invocation (tmpdir, processes, gpus, memory)
 
+# Find container file
+
+
 
 def function_name(*args, **kwargs):
     """ Extended python interface:
@@ -35,7 +38,7 @@ def function_name(*args, **kwargs):
 def tf_enrichment(input_file=None, output_file=None, verbose_flag='-v', verbose='T'):
     """
     The Definition is equal to:
-        Rscript --vanilla /opt/tf_enrichment.R <de_input_file> <output_file>
+        Rscript --vanilla /opt/tf_enrichment.R <de_input_file> <output_file> -v <verbose>
     """
     pass
 

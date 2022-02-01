@@ -5,6 +5,7 @@ From: pablormier/permedcoe/saeztools:1.0.0
     ./scripts/tf_enrichment.R /opt
     ./scripts/progeny.R /opt
 	./scripts/preprocess.R /opt
+    ./scripts/export.R /opt
 
 %apprun tfenrichment
     exec Rscript --vanilla /opt/tf_enrichment.R "${@}"
@@ -14,6 +15,9 @@ From: pablormier/permedcoe/saeztools:1.0.0
 
 %apprun progeny
     exec Rscript --vanilla /opt/progeny.R "${@}"
+
+%apprun export
+    exec Rscript --vanilla /opt/export.R "${@}"
 
 %test
     exec Rscript --vanilla /opt/tf_enrichment.R --help
