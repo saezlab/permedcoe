@@ -36,25 +36,27 @@ def function_name(*args, **kwargs):
 
 
 @container(engine="SINGULARITY", image=container_file)
-@binary(binary="Rscript --vanilla /opt/tf_enrichment.R")
+@binary(binary="Rscript --vanilla /opt/progeny.R")
 @task(input_file=FILE_IN, output_file=FILE_OUT)
-def tf_enrichment(input_file=None, output_file=None, 
-                  weight_col_flag='-w', weight_col=None,
-                  source_flag='-s', source=None,
-                  id_col_flag='-i', id_col=None,
-                  tsv_flag='-t', tsv=None,
-                  minsize_flag='-m', minsize=None,
-                  confidence_flag='-c', confidence=None,
-                  verbose_flag='-v', verbose=None):
+def progeny(input_file=None, output_file=None, 
+            organism_flag='-o', organism=None,
+            ntop_flag='-i', ntop=None,
+            col_genes_flag='-c', col_genes=None,
+            scale_flag='-s', scale=None,
+            exclude_cols_flag='-e', exclude_cols=None,
+            tsv_flag='-t', tsv=None,
+            perms_flag='-p', perms=None,
+            zscore_flag='-z', zscore=None,
+            verbose_flag='-v', verbose=None):
     pass
 
 
 def invoke(input, output, config):
     # Example:
-    # tfenrichment -i gex.csv DATA.906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906826_tf.csv
-    var_inputs = ['input_file', 'weight_col', 'id_col', 'source', 'tsv', 'minsize', 'confidence', 'verbose']
+    # progeny -i gex.csv Human 60 GENE_SYMBOLS TRUE GENE_title FALSE 3000 TRUE TRUE -o progeny11.csv
+    var_inputs = ['input_file', 'organism', 'ntop', 'col_genes', 'scale', 'exclude_cols', 'tsv', 'perms', 'zscore', 'verbose']
     # Assign only the provided variables
     kwargs = {k: v for k, v in zip(var_inputs[:len(input)], input)}
     kwargs['output_file'] = output[0]
     print(kwargs)
-    tf_enrichment(**kwargs)
+    progeny(**kwargs)

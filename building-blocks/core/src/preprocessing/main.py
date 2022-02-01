@@ -53,8 +53,5 @@ def invoke(input, output, config):
     kwargs = {k: v for k, v in zip(var_inputs[:len(input)], input)}
     kwargs['output_file'] = output[0]
     print(kwargs)
-    input_file, col_genes, exclude_cols, scale, tsv, verbose = input
-    # kwargs cannot be passed to the function using **kwargs !!
-    preprocess(input_file=input_file, col_genes=col_genes, 
-                exclude_cols=exclude_cols, scale=scale,
-                tsv=tsv, verbose=verbose, output_file=output[0])
+    preprocess(**kwargs)
+    
