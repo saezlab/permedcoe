@@ -5,6 +5,7 @@
 
 *.sif
 .Rhistory
+*.npz
 
 ### Linux ###
 *~

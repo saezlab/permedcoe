@@ -14,3 +14,5 @@ preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title FALSE TRUE TRUE -o gex.csv
 preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title TRUE TRUE TRUE -o gex_n.csv
 tfenrichment -i gex_n.csv DATA.906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906826_tf.csv
 progeny -i gex.csv Human 60 GENE_SYMBOLS TRUE GENE_title FALSE 3000 TRUE TRUE -o progeny11.csv
+ml -i . . . 1000 0.1 0.0001 -o model.npz
+ml -i model.npz . . 0 0 0 -o result.csv

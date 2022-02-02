@@ -1,3 +1,4 @@
+import os
 import jax
 import jax.numpy as jnp
 import pandas as pd
@@ -31,6 +32,30 @@ def load_cell_features(file):
     df_cell_features = df_cell_features.rename(columns={df_cell_features.columns[0]: 'cell'}).set_index('cell')
     df_cell_features = df_cell_features.add_prefix("PROGENY_").reset_index().rename(columns={'index':'cell'}).set_index('cell')
     return df_cell_features
+
+def split(df_response, df_row_feats=None, df_col_feats=None, frac_rows=0.1, frac_cols=0.1):
+    test_rows = df_response.sample(frac=frac_rows, replace=False).index
+    test_cols = df_response.T.sample(frac=frac_cols, replace=False).index
+    train_rows = df_response.index.difference(test_rows)
+    train_cols = df_response.columns.difference(test_cols)
+    df_response_test = df_response.loc[test_rows, test_cols]
+    df_response_train = df_response.loc[train_rows, train_cols]
+    if df_row_feats is not None:
+        df_row_feats_train = df_row_feats.loc[train_rows, :]
+        df_row_feats_test = df_row_feats.loc[test_rows, :]
+    else:
+        df_row_feats_train = df_row_feats_test = None
+        df_response_test = df_response.loc[:, test_cols]
+
+    if df_col_feats is not None:
+        df_col_feats_train = df_col_feats.loc[train_cols, :]
+        df_col_feats_test = df_col_feats.loc[test_cols, :]
+    else:
+        df_col_feats_train = df_col_feats_test = None
+        df_response_test = df_response.loc[test_rows, :]
+    return ([df_response_train, df_row_feats_train, df_col_feats_train], 
+            [df_response_test, df_row_feats_test, df_col_feats_test])
+
 
 def initialize_weights(data, row_features=None, col_features=None, k=10):
     if row_features is not None:
@@ -126,49 +151,105 @@ if __name__ == "__main__":
     print("Using JAX version", jax.__version__)
     
     parser = argparse.ArgumentParser(description="ML UC2 model")
-    parser.add_argument('--ic50', type=str, default=DATA_LOGIC50, help="Response file of IC50 values")
+    parser.add_argument('input_file', type=str, help='IC50 csv response data for training or npz file with the model for inference')
+    parser.add_argument('output_file', type=str, help='File to store predictions in inference mode or npz model if in training mode')
     parser.add_argument('--drug_features', type=str, default=DATA_DRUG_FEATURES, help="File with drug features")
     parser.add_argument('--cell_features', type=str, default=DATA_CELL_FEATURES, help="File with cell features")
-    parser.add_argument('--model_file', type=str, default='model.npz', help="Name of the file used to store a trained model")
-    parser.add_argument('--model', type=str, default=None, help='Path to a model file. If provided, features are used for inferring ic50 values instead of training')
-    parser.add_argument('--epochs', type=int, default=1000, help='Number of epochs for training')
+    parser.add_argument('--epochs', type=int, default=200, help='Number of epochs for training')
     parser.add_argument('--adam_lr', type=float, default=0.1, help='Learning rate for ADAM optimizer')
-    parser.add_argument('--reg', type=float, default=1e-5, help='Regularization penalty for sparisty')
-    parser.add_argument('--output_prediction', type=str, default='prediction.csv', help='Name of the file to store the predictions in inference mode')
+    parser.add_argument('--reg', type=float, default=1e-3, help='Regularization penalty for sparisty')
+    parser.add_argument('--test_drugs', type=float, default=0.0, help='Proportion of drugs removed from training and used for test')
+    parser.add_argument('--test_cells', type=float, default=0.0, help='Proportion of cell lines removed from training and used for test')
+    parser.add_argument('--latent_size', type=int, default=10, help='Size of the latent vector')
     args = parser.parse_args()
+    
 
-    df_logIC50 = load_ic50(args.ic50)
-    df_drug_features = load_drug_features(args.drug_features)
-    df_cell_features = load_cell_features(args.cell_features)
-    df_drug_features = df_drug_features.loc[df_logIC50.index] # align with target
-    common = df_cell_features.index.intersection(df_logIC50.columns.astype(int))
-    df_cell_features = df_cell_features.loc[common] # align with cols in target data
-    df_logIC50 = df_logIC50.loc[:, common]
-    print("Cell features", df_cell_features.shape)
-    print("Drug features", df_drug_features.shape)
+    df_logIC50 = None
+    if args.input_file.endswith('.x'):
+        print(f'Using example log(IC50) from {DATA_LOGIC50}')
+        df_logIC50 = load_ic50(DATA_LOGIC50)
+    else:
+        if not args.input_file.endswith('.npz'):
+            df_logIC50 = load_ic50(args.input_file)
 
-    row_features = df_drug_features.to_numpy()
-    col_features = df_cell_features.to_numpy()
+    if args.drug_features.endswith('.x'):
+        print(f'Using example drug features from {DATA_DRUG_FEATURES}')
+        df_drug_features = load_drug_features(DATA_DRUG_FEATURES)
+    elif args.drug_features is None or args.drug_features == '.none':
+        df_drug_features = None
+        if args.test_drugs > 0.0:
+            print("No features provided for drugs, cannot test drug predictions, setting test_drugs to 0.0")
+            args.test_drugs = 0.0
+    else:
+        print(f'Using drug features from {args.drug_features}')
+        df_drug_features = load_drug_features(args.drug_features)
 
-    if args.model is not None:
-        print(f"Loading model from file {args.model}...")
-        p = np.load(args.model, allow_pickle=True)
+    if args.cell_features.endswith('.x'):
+        print(f'Using example cell features from {DATA_CELL_FEATURES}')
+        df_cell_features = load_drug_features(DATA_CELL_FEATURES)
+    elif args.cell_features is None or args.cell_features == '.none':
+        df_cell_features = None
+        if args.test_cells > 0.0:
+            print("No features provided for cells, cannot test cell predictions, setting test_cells to 0.0")
+            args.test_cells = 0.0
+    else:
+        print(f'Using cell features from {args.cell_features}')
+        df_cell_features = load_cell_features(args.cell_features)
+
+    if df_drug_features is not None and df_logIC50 is not None:
+        common_drugs = df_drug_features.index.intersection(df_logIC50.index)
+        df_drug_features = df_drug_features.loc[common_drugs, :] # align with drug IDs
+        df_logIC50 = df_logIC50.loc[common_drugs, :]
+        print("Drug features", df_drug_features.shape)
+    if df_cell_features is not None and df_logIC50 is not None:
+        common_cells = df_cell_features.index.intersection(df_logIC50.columns.astype(int))
+        df_cell_features = df_cell_features.loc[common_cells, :]
+        df_logIC50 = df_logIC50.loc[:, common_cells]
+        print("Cell features", df_cell_features.shape)
+    if df_logIC50 is not None:    
+        print(f'Response size after alignment: {df_logIC50.shape}')
+
+
+    if args.input_file.endswith('.npz'):
+        print(f"Loading model from file {args.input_file}...")
+        p = np.load(args.input_file, allow_pickle=True)
         params = [p['LD'], p['LC'], p['ld_bias'], p['lc_bias'], p['mu']]
         # predict
-        X_hat = predict(params, row_features, col_features)
-        df_pred = pd.DataFrame(X_hat, index=df_drug_features.index, columns=df_cell_features.index)
+        row_features = df_drug_features.to_numpy() if df_drug_features is not None else None
+        col_features = df_cell_features.to_numpy() if df_cell_features is not None else None
+        idx = df_drug_features.index if row_features is not None else df_logIC50.index
+        cols = df_cell_features.index if col_features is not None else df_logIC50.columns
+        X_hat = predict(params, row_features=row_features, col_features=col_features)
+        df_pred = pd.DataFrame(X_hat, index=idx, columns=cols)
         print(df_pred)
-        print(f"Saving to {args.output_prediction}...")
-        df_pred.to_csv(args.output_prediction)
+        print(f"Saving to {args.output_file}...")
+        df_pred.to_csv(args.output_file)
     else:
+        print(f"Using a latent vector of size {args.latent_size}.")
         print(f"Using ADAM with lr={args.adam_lr}, epochs={args.epochs}, l2 regularization={args.reg}")
-        params = initialize_weights(df_logIC50, row_features=row_features, col_features=col_features)
+        print(f"Response data of size {df_logIC50.shape} (drugs x cells)")
+        train, test = split(df_logIC50, df_row_feats=df_drug_features, df_col_feats=df_cell_features, frac_rows=args.test_drugs, frac_cols=args.test_cells)
+        [df_response_train, df_drug_train, df_cell_train] = train
+        [df_response_test, df_drug_test, df_cell_test] = test
+        print(f'Keeping {args.test_drugs} rows for test, and {args.test_cells} cols for test')
+        print(f'New training data size: {df_response_train.shape}')
+        row_features = df_drug_train.to_numpy() if df_drug_train is not None else None
+        col_features = df_cell_train.to_numpy() if df_cell_train is not None else None
+        params = initialize_weights(df_response_train, row_features=row_features, col_features=col_features, k=args.latent_size)
         opt = optimizers.adam(args.adam_lr)
-        params = optimize(df_logIC50.to_numpy(), params, epochs=args.epochs, opt=opt, 
+        params = optimize(df_response_train.to_numpy(), params, epochs=args.epochs, opt=opt, 
                         loss_options={'row_features': row_features, 'col_features': col_features, 'reg': args.reg})
         LD, LC, ld_bias, lc_bias, mu = params
-        if args.model_file is not None:
-            print(f"Exporting model to {args.model_file}...")
-            np.savez_compressed(args.model_file, LD=LD, LC=LC, ld_bias=ld_bias, lc_bias=lc_bias, mu=mu)
+        if df_response_test is not None:
+            print(f'Test response shape: {df_response_test.shape}')
+            row_features = df_drug_test.to_numpy() if df_drug_test is not None else None
+            col_features = df_cell_test.to_numpy() if df_cell_test is not None else None
+            X_hat = predict(params, row_features=row_features, col_features=col_features)
+            print(f'Test prediction shape: {X_hat.shape}')
+            e = loss_mse(df_response_test.to_numpy(), X_hat)
+            eb = loss_mse(df_response_test.to_numpy(), np.full_like(X_hat, df_response_test.mean().mean()))
+            print(f"MSE test: {e:.4f}, MSE baseline: {eb:.4f}, ")
+        print(f"Exporting model to {args.output_file}...")
+        np.savez_compressed(args.output_file, LD=LD, LC=LC, ld_bias=ld_bias, lc_bias=lc_bias, mu=mu)
     print("Done.")
         

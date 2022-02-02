@@ -2,16 +2,24 @@ Bootstrap: docker
 
 From: continuumio/miniconda3
 
+%files
+    ./ml.py /opt
+
 %post
-    /opt/conda/bin/conda install -y pandas tensorflow tqdm
-    /opt/conda/bin/conda install -c conda-forge jax=0.2.27
+    /opt/conda/bin/conda install -y pandas tensorflow=2.4.1 tqdm
+    /opt/conda/bin/conda install -c conda-forge jax=0.2.21
     /opt/conda/bin/pip install iterative-stratification
 
 %runscript
     exec /opt/conda/bin/"$@"
 
+
+%apprun ml
+    exec /opt/conda/bin/python /opt/ml.py "${@}"
+
+
 %test
-    if /opt/conda/bin/python -c "import jax; print(jax.__version__)" | grep -q "0.2.27"; then
+    if /opt/conda/bin/python -c "import jax; print(jax.__version__)" | grep -q "0.2.21"; then
         echo "JAX correctly installed"
     else
         echo "There is an issue with JAX installation!"
