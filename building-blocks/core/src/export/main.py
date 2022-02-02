@@ -35,24 +35,19 @@ def function_name(*args, **kwargs):
 
 
 @container(engine="SINGULARITY", image=container_file)
-@binary(binary="Rscript --vanilla /opt/preprocess.R")
-@task(input_file=FILE_IN, output_file=FILE_OUT)
-def preprocess(input_file=None, output_file=None,
-               col_genes_flag='-c', col_genes=None,
-               scale_flag='-s', scale=None,
-               exclude_cols_flag='-e', exclude_cols=None,
-               tsv_flag='-t', tsv=None,
-               remove_flag='-r', remove=None,
+@binary(binary="Rscript --vanilla /opt/export.R")
+@task(sif=FILE_IN, measurements=FILE_IN, inputs=FILE_IN, output_file=FILE_OUT)
+def export(sif=None, measurements=None, inputs=None, output_file=None,
                verbose_flag='-v', verbose=None):
     pass
 
 
 def invoke(input, output, config):
-    # preprocess -i file.csv GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o out.csv
-    var_inputs = ['input_file', 'col_genes', 'exclude_cols', 'scale', 'tsv', 'verbose', 'remove']
+    # export_bb -i sif.csv measurements.csv inputs.csv TRUE -o file.h5
+    var_inputs = ['sif', 'measurements', 'inputs', 'verbose']
     # Assign only the provided variables
     kwargs = {k: v for k, v in zip(var_inputs[:len(input)], input)}
     kwargs['output_file'] = output[0]
     print(kwargs)
-    preprocess(**kwargs)
+    export(**kwargs)
     

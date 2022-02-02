@@ -12,6 +12,7 @@ parser <- OptionParser(
     make_option(c("-s", "--scale"), default=F, help="Scale the data. Default = TRUE"),
     make_option(c("-e", "--exclude_cols"), default="GENE_title", help="Exclude columns containing the given string. Default = 'GENE_title'"),
     make_option(c("-t", "--tsv"), default=F, help="Assume file is TSV instead of CSV. Default = FALSE"),
+    make_option(c("-r", "--remove"), default="DATA.", help="Remove substring from columns"),
     make_option(c("-v", "--verbose"), default=F, help="Verbosity (default False)")
   ),
   add_help_option = T,
@@ -46,6 +47,7 @@ df <- df[!is.na(df[arguments$options$col_genes]),]
 df <- 
   df %>% 
   select(-contains(arguments$options$exclude_cols)) %>%
+  rename_with(~gsub(arguments$options$remove, "", .x, fixed = TRUE)) %>%
   column_to_rownames(var = arguments$options$col_genes)
 
 if (arguments$options$scale) {

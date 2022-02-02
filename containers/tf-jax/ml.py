@@ -175,7 +175,7 @@ if __name__ == "__main__":
     if args.drug_features.endswith('.x'):
         print(f'Using example drug features from {DATA_DRUG_FEATURES}')
         df_drug_features = load_drug_features(DATA_DRUG_FEATURES)
-    elif args.drug_features is None or args.drug_features == '.none':
+    elif args.drug_features is None or args.drug_features.endswith('.none'):
         df_drug_features = None
         if args.test_drugs > 0.0:
             print("No features provided for drugs, cannot test drug predictions, setting test_drugs to 0.0")
@@ -187,7 +187,7 @@ if __name__ == "__main__":
     if args.cell_features.endswith('.x'):
         print(f'Using example cell features from {DATA_CELL_FEATURES}')
         df_cell_features = load_drug_features(DATA_CELL_FEATURES)
-    elif args.cell_features is None or args.cell_features == '.none':
+    elif args.cell_features is None or args.cell_features.endswith('.none'):
         df_cell_features = None
         if args.test_cells > 0.0:
             print("No features provided for cells, cannot test cell predictions, setting test_cells to 0.0")

@@ -10,9 +10,13 @@ fi
 unzip /tmp/Cell_line_RMA_proc_basalExp.txt.zip -d /tmp/
 mv /tmp/Cell_line_RMA_proc_basalExp.txt /tmp/gex.tsv
 
-preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title FALSE TRUE TRUE -o gex.csv
-preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title TRUE TRUE TRUE -o gex_n.csv
-tfenrichment -i gex_n.csv DATA.906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906826_tf.csv
-progeny -i gex.csv Human 60 GENE_SYMBOLS TRUE GENE_title FALSE 3000 TRUE TRUE -o progeny11.csv
-ml -i . . . 1000 0.1 0.0001 -o model.npz
-ml -i model.npz . . 0 0 0 -o result.csv
+# Export to CSV (raw) and normalized
+preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o gex.csv
+preprocess -i /tmp/gex.tsv GENE_SYMBOLS GENE_title TRUE TRUE TRUE DATA. -o gex_n.csv
+# Example of computing TF enrichment for the first cell line (column 906826)
+# This should be done for all columns
+tfenrichment -i gex_n.csv 906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906826_tf.csv
+# Use progeny to compute pathway activities
+progeny -i gex.csv Human 80 GENE_SYMBOLS TRUE GENE_title FALSE 1 FALSE TRUE -o progeny11.csv
+# Train and model using drug/cell features to predict IC50 responses (use default data from repo except progeny11)
+ml -i .x .x progeny11.csv 200 0.1 0.001 10 0.1 0.1 -o model.npz
