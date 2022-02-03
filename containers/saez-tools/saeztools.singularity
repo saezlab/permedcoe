@@ -3,8 +3,9 @@ From: pablormier/permedcoe/r-base:4.1.2
 
 %post
     apt -y install build-essential libcurl4-openssl-dev libxml2-dev libssl-dev libpng-dev
-    R -e 'install.packages(c("devtools","BiocManager"))'
-    R -e 'BiocManager::install(c("tidyverse","progeny","dorothea","decoupleR","cosmosR","optparse","CARNIVAL","CellNOptR","rhdf5"))'
+    R -e 'install.packages(c("devtools","BiocManager","remotes","igraph","stringi"))'
+    R -e 'BiocManager::install(c("tidyverse","OmnipathR","progeny","dorothea","decoupleR","cosmosR","optparse","CellNOptR","rhdf5"))'
+    R -e 'remotes::install_github("saezlab/CARNIVAL", ref="963fbc1db2d038bfeab76abe792416908327c176")'
 
 %runscript
     exec Rscript --vanilla "${@}"

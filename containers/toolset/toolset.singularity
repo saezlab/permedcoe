@@ -6,6 +6,12 @@ From: pablormier/permedcoe/saeztools:1.0.0
     ./scripts/progeny.R /opt
 	./scripts/preprocess.R /opt
     ./scripts/export.R /opt
+    ./scripts/omnipath.R /opt
+    ./scripts/export_carnival.R /opt
+
+%post
+    apt -y install git
+    git clone https://github.com/saezlab/permedcoe.git /opt/
 
 %apprun tfenrichment
     exec Rscript --vanilla /opt/tf_enrichment.R "${@}"
@@ -19,7 +25,14 @@ From: pablormier/permedcoe/saeztools:1.0.0
 %apprun export
     exec Rscript --vanilla /opt/export.R "${@}"
 
+%apprun omnipath
+    exec Rscript --vanilla /opt/omnipath.R "${@}"
+
+%apprun export_carnival
+    exec Rscript --vanilla /opt/export_carnival.R "${@}"    
+
 %test
     exec Rscript --vanilla /opt/tf_enrichment.R --help
 	exec Rscript --vanilla /opt/normalize.R --help
 	exec Rscript --vanilla /opt/progeny.R --help
+    exec Rscript --vanilla /opt/omnipath.R --help

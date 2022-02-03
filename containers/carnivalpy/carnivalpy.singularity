@@ -1,0 +1,20 @@
+Bootstrap: docker
+
+From: continuumio/miniconda3
+
+%post
+    apt -y install git
+    mkdir /opt/carnival
+    git clone https://github.com/saezlab/permedcoe.git /opt/carnival
+    /opt/conda/bin/conda install -y pandas tqdm
+    /opt/conda/bin/pip install mip PICOS swiglpk gurobipy Mosek
+
+%runscript
+    exec /opt/conda/bin/"$@"
+
+%apprun carnival
+    exec /opt/conda/bin/python /opt/carnival/carnivalpy/carnival.py "${@}"
+
+%test
+    exec /opt/conda/bin/python /opt/carnival/carnivalpy/carnival.py /opt/carnival/carnivalpy/examples/ex1 --export /tmp/sol.csv
+
