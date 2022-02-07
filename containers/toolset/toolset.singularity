@@ -32,7 +32,7 @@ From: pablormier/permedcoe/saeztools:1.0.0
     exec Rscript --vanilla /opt/export_carnival.R "${@}"    
 
 %test
-    exec Rscript --vanilla /opt/tf_enrichment.R --help
-	exec Rscript --vanilla /opt/normalize.R --help
-	exec Rscript --vanilla /opt/progeny.R --help
-    exec Rscript --vanilla /opt/omnipath.R --help
+    Rscript --vanilla /opt/tf_enrichment.R --help
+	Rscript --vanilla /opt/normalize.R --help
+	Rscript --vanilla /opt/progeny.R --help
+    Rscript --vanilla /opt/omnipath.R --help

@@ -6,6 +6,8 @@ import numpy as np
 import argparse
 from tqdm import tqdm
 from jax.experimental import optimizers
+from sklearn.model_selection import KFold
+from iterstrat.ml_stratifiers import MultilabelStratifiedKFold
 
 
 DATA_LOGIC50 = "https://raw.githubusercontent.com/saezlab/Macau_project_1/master/DATA/IC50"
@@ -145,6 +147,19 @@ def optimize(X, params, opt=optimizers.adam(0.1), loss_fn=loss_mf,
         opt_state = opt.update_fn(step, grads, opt_state)
         steps.set_postfix({'loss': "{:.4f}".format(value)})
     return opt.params_fn(opt_state)
+
+def r2(y, y_hat):
+    yf = np.array(y).flatten()
+    yf_hat = np.array(y_hat).flatten()
+    isnan = np.isnan(yf)
+    yf = yf[~isnan]
+    yf_hat = yf_hat[~isnan]
+    r2 = np.nan
+    ss_res = np.nansum((yf - yf_hat)**2)
+    ss_total = np.nansum((yf - np.nanmean(yf))**2)
+    if ss_total > 0:
+        r2 = 1 - ss_res/ss_total
+    return r2
     
 
 if __name__ == "__main__":
@@ -245,10 +260,11 @@ if __name__ == "__main__":
             row_features = df_drug_test.to_numpy() if df_drug_test is not None else None
             col_features = df_cell_test.to_numpy() if df_cell_test is not None else None
             X_hat = predict(params, row_features=row_features, col_features=col_features)
+            X = df_response_test.to_numpy()
             print(f'Test prediction shape: {X_hat.shape}')
-            e = loss_mse(df_response_test.to_numpy(), X_hat)
-            eb = loss_mse(df_response_test.to_numpy(), np.full_like(X_hat, df_response_test.mean().mean()))
-            print(f"MSE test: {e:.4f}, MSE baseline: {eb:.4f}, ")
+            e = loss_mse(X, X_hat)
+            eb = loss_mse(X, np.full_like(X_hat, df_response_train.mean().mean()))
+            print(f"MSE_test: {e:.4f}, MSE_baseline: {eb:.4f}, R2_test: {r2(X, X_hat):.4f}")
         print(f"Exporting model to {args.output_file}...")
         np.savez_compressed(args.output_file, LD=LD, LC=LC, ld_bias=ld_bias, lc_bias=lc_bias, mu=mu)
     print("Done.")
