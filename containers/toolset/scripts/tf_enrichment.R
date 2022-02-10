@@ -16,7 +16,9 @@ parser <- OptionParser(
     make_option(c("-m", "--minsize"), default=10, help="Min size allowed for regulons"),
     make_option(c("-s", "--source"), default="tf", help="Name of the source column in the PKN"),
     make_option(c("-c", "--confidence"), default="A,B,C", help="Levels of confidence to include, separated by commas, e.g. 'A,B,C'"),
-    make_option(c("-v", "--verbose"), default=F, help="Verbosity (default False)")
+    make_option(c("-v", "--verbose"), default=F, help="Verbosity (default False)"),
+    make_option(c("-p", "--pval_threshold"), default=0.1, help="Filter out TFs with adj. p-val above the provided value. Default = 0.1"),
+    make_option(c("-e", "--export_carnival"), default=F, help="Export a table with the results with two columns (id, value) only (for CARNIVAL). Default = F")
   ),
   add_help_option = T,
   prog = "Differential expression data processing (Building Block)",
@@ -55,7 +57,15 @@ tf_activity <- decoupleR::run_viper(
   minsize = arguments$options$minsize,
   verbose = verbose,
   eset.filter = FALSE
-) %>% dplyr::mutate(adj_p = p.adjust(p_value, method = "BH"))
+) %>% 
+dplyr::mutate(adj_p = p.adjust(p_value, method = "BH")) %>%
+filter(adj_p <= arguments$options$pval_threshold)
+
+
+if (arguments$options$export_carnival){
+    tf_activity <- tf_activity %>% select(source, score) %>% rename(id = source, value = score)
+}
+
 
 if (verbose) {
   sprintf("Exporting to %s...", arguments$args[2])

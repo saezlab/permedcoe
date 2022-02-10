@@ -58,6 +58,15 @@ def split(df_response, df_row_feats=None, df_col_feats=None, frac_rows=0.1, frac
     return ([df_response_train, df_row_feats_train, df_col_feats_train], 
             [df_response_test, df_row_feats_test, df_col_feats_test])
 
+def kfold_validation(df_ic50, drug_features=None, cell_features=None, n_folds=10):
+    kf = KFold(n_splits=n_folds, shuffle=True)
+    if drug_features is not None:
+        pass
+    if cell_features is not None:
+        pass
+    # Go through all:
+    pass
+
 
 def initialize_weights(data, row_features=None, col_features=None, k=10):
     if row_features is not None:
@@ -160,7 +169,9 @@ def r2(y, y_hat):
     if ss_total > 0:
         r2 = 1 - ss_res/ss_total
     return r2
-    
+
+
+          
 
 if __name__ == "__main__":
     print("Using JAX version", jax.__version__)
@@ -176,6 +187,7 @@ if __name__ == "__main__":
     parser.add_argument('--test_drugs', type=float, default=0.0, help='Proportion of drugs removed from training and used for test')
     parser.add_argument('--test_cells', type=float, default=0.0, help='Proportion of cell lines removed from training and used for test')
     parser.add_argument('--latent_size', type=int, default=10, help='Size of the latent vector')
+    parser.add_argument('--folds', type=int, default=0, help='Number of folds for k-fold validation strategy (ignores test_drugs and test_cells)')
     args = parser.parse_args()
     
 
