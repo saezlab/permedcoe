@@ -130,7 +130,7 @@ class Problem(ABC):
         # Minimize the discrepancies of the measurements (aD vars)
         # Use a penalty on the number of active nodes
         # TODO: Change to a matrix form to accelerate PICOS processing
-        obj1 = sum([vn[f'aD_{k}'] for k, v in measurements.items()])
+        obj1 = sum([float(v)*vn[f'aD_{k}'] for k, v in measurements.items()])
         if penalty > 0:
             obj2u = penalty * sum([vn[f'nU_{node}'] for node in set(graph.source) | set(graph.target)])
             obj2d = penalty * sum([vn[f'nD_{node}'] for node in set(graph.source) | set(graph.target)])
