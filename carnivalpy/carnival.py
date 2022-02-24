@@ -263,7 +263,7 @@ if __name__ == '__main__':
     # Check if perturbations is provided:
     pert_file = os.path.join(args.folder, 'perturbations.csv')
     if os.path.exists(pert_file):
-        perturbations = pd.read_csv().set_index('id').value.to_dict()
+        perturbations = pd.read_csv(pert_file).set_index('id').value.to_dict()
     else:
         # Inverse search
         raise NotImplementedError("Inverse carnival not implemented")
