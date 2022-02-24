@@ -4,6 +4,34 @@ This package contains the list of building blocks produced by UKHD.
 
 ## Prerequisites
 
+- Python >= 3.6
+- [Singularity](https://singularity.lbl.gov/docs-installation)
+- `permedcoe` base package: `python3 -m pip install permedcoe`
+
+In addtion to the dependencies, it is necessary to generate the associated
+singularity images that are available here: https://github.com/saezlab/permedcoe/tree/master/containers
+
+They **MUST be available and exported respectively in the following environment variables**
+before its usage:
+
+```bash
+export PERMEDCOE_SINGULARITY="/path/to/images/"
+```
+
+### Installation
+
+This package provides an automatic installation script:
+
+```bash
+./install.sh
+```
+
+This script creates a file `installation_files.txt` to keep track of the
+installed files.
+It is used with the `uninstall.sh` script to uninstall the Building Block
+from the system.
+
+
 ## Export BB
 
 The `export_bb` building block converts from the csv files required by CARNIVAL (the PKN .sif file, the measurements csv file, and the perturbations or inputs csv file) to a hdf5 format required by the refactored version of CARNIVAL.
