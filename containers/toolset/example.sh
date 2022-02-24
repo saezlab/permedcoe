@@ -20,7 +20,7 @@ singularity run --app omnipath toolset.sif sif.csv
 #singularity exec -B $CONDA_PREFIX:/opt/env --env "LD_LIBRARY_PATH=/opt/env/" toolset.sif Rscript --vanilla scripts/carnivalr.R gurobi /opt/env/bin/gurobi_cl /opt/permedcoe/carnivalpy/examples/ex1/network.csv /opt/permedcoe/carnivalpy/examples/ex1/measurements.csv /opt/permedcoe/carnivalpy/examples/ex1/perturbations.csv
 
 #singularity exec -B $CONDA_PREFIX:/opt/env --env "LD_LIBRARY_PATH=/opt/env/" toolset.sif Rscript --vanilla scripts/carnivalr.R --timelimit 60 gurobi /opt/env/bin/gurobi_cl sif.csv tf_906826.csv
-singularity run --app carnival carnivalpy.sif . --solver cbc --export carnival.csv
+singularity run --app carnival carnivalpy.sif . --solver cbc --opt_tol 0.1 --export carnival.csv
 
 # TODO: Export the csv to the old R format
 

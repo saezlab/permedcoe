@@ -22,6 +22,7 @@ progeny_bb -i gex.csv Human 80 GENE_SYMBOLS TRUE GENE_title FALSE 1 FALSE TRUE -
 tfenrichment_bb -i gex_n.csv 906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906826_tf.csv
 
 # TODO: Run CARNIVAL for each column (can be in parallel)
+# carnivalpy_bb
 
 # TODO: Merge progeny11.csv with a matrix with samples x carnival features
 

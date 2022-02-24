@@ -47,16 +47,21 @@ class Problem(ABC):
     def _edgename(row):
         return row.source + "_" + row.target
 
-    def build(self, graph, measurements, perturbations, penalty=0.2):
+    def build(self, graph, measurements, perturbations, penalty=0.0001):
         # Direct translation of the V2 CARNIVAL ILP implementation
+        # TODO: Support Inverse CARNIVAL (add all perturbations as parents, with both signs)
+        # See https://github.com/saezlab/CARNIVAL/blob/963fbc1db2d038bfeab76abe792416908327c176/R/create_lp_formulation.R
+        # Perturbations are included in C8 and C9
         vn = dict()
+        # For all unique nodes in the graph
         for node in set(graph.source) | set(graph.target):
             vn[f'nU_{node}'] = self.create_binary(f'nU_{node}')
             vn[f'nD_{node}'] = self.create_binary(f'nD_{node}')
             vn[f'nX_{node}'] = self.create_integer(f'nX_{node}', lower=-1, upper=1)
             vn[f'nAc_{node}'] = self.create_integer(f'nAc_{node}', lower=-1, upper=1)
             vn[f'nDs_{node}'] = self.create_integer(f'nDs_{node}', lower=0, upper=100)
-            # Add also C8 here
+            # Add also C8 here (for all nodes)
+            # https://github.com/saezlab/CARNIVAL/blob/963fbc1db2d038bfeab76abe792416908327c176/R/constraints_create_constraints_8.R#L8
             self.add_constraint(vn[f'nU_{node}'] - vn[f'nD_{node}'] + vn[f'nAc_{node}'] - vn[f'nX_{node}'] == 0)
             
         # Create variables for the measurements (to measure a mismatch which goes from 0 to 2)
@@ -115,11 +120,20 @@ class Problem(ABC):
                 self.add_constraint(vn[f'nD_{target}'] <= sum(eD))
             
         # Add constraints for perturbations
-        for node in perturbations:
+        # https://github.com/saezlab/CARNIVAL/blob/963fbc1db2d038bfeab76abe792416908327c176/R/create_lp_formulation.R
+        for node, v in perturbations.items():
             self.add_constraint(vn[f'nU_{node}'] <= 0)
             self.add_constraint(vn[f'nD_{node}'] <= 0)
-            self.add_constraint(vn[f'nX_{node}'] == 1)
-            self.add_constraint(vn[f'nX_{node}'] - vn[f'nAc_{node}'] == 0)
+            # TODO: This can be 1 or -1 depending on the perturbation value
+            self.add_constraint(vn[f'nX_{node}'] == v)
+            # C8-parents, this is not only for perturbations! removed from here (TODO: validate)
+            # self.add_constraint(vn[f'nX_{node}'] - vn[f'nAc_{node}'] == 0)
+
+        # C8-parents (all nodes in the graph that are not targets)
+        # See https://github.com/saezlab/CARNIVAL/blob/963fbc1db2d038bfeab76abe792416908327c176/R/constraints_create_constraints_8.R#L33
+        parent_nodes = set(graph.source) - set(graph.target)
+        for node in parent_nodes:
+            self.add_constraint(vn[f'nX_{node}'] - vn[f'nAc_{node}'] == 0)    
             
         # C8 for unperturbed nodes
         unperturbed = (set(graph.source) | set(graph.target)) - set(perturbations.keys())
@@ -245,7 +259,15 @@ if __name__ == '__main__':
     export_file = args.export if args.export else f"{args.folder}/solution.csv"
     graph = pd.read_csv(os.path.join(args.folder, 'network.csv'), index_col=False)
     measurements = pd.read_csv(os.path.join(args.folder, 'measurements.csv')).set_index('id').value.to_dict()
-    perturbations = pd.read_csv(os.path.join(args.folder, 'perturbations.csv')).set_index('id').value.to_dict()
+
+    # Check if perturbations is provided:
+    pert_file = os.path.join(args.folder, 'perturbations.csv')
+    if os.path.exists(pert_file):
+        perturbations = pd.read_csv().set_index('id').value.to_dict()
+    else:
+        # Inverse search
+        raise NotImplementedError("Inverse carnival not implemented")
+
     print(f"Loaded data:")
     print(f" - Network: {graph.shape}")
     print(f" - Measurements: {len(measurements)}")
