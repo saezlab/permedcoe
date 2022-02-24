@@ -37,7 +37,7 @@ def function_name(*args, **kwargs):
 
 
 @container(engine="SINGULARITY", image=container_file)
-@binary(binary="/opt/carnival/build/example1")
+@binary(binary="/opt/cellnopt/build/example1")
 @task(input_file=FILE_IN)
 def cellnopt(input_file=None):
     pass
