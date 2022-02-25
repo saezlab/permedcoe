@@ -265,8 +265,19 @@ if __name__ == '__main__':
     if os.path.exists(pert_file):
         perturbations = pd.read_csv(pert_file).set_index('id').value.to_dict()
     else:
-        # Inverse search
-        raise NotImplementedError("Inverse carnival not implemented")
+        # Select all nodes without parents as potential perturbations
+        # Assume those are +1
+        nodes = set(graph.source) - set(graph.target)
+        print(f"No perturbations provided, adding {len(nodes)} source nodes")
+        # Add +1 and -1 edges
+        d1 = pd.DataFrame(dict(source=["Perturbation_POS"]*len(nodes), interaction=[1]*len(nodes), target=list(nodes)))
+        d2 = pd.DataFrame(dict(source=["Perturbation_NEG"]*len(nodes), interaction=[-1]*len(nodes), target=list(nodes)))
+        print(f"Original PKN shape: {graph.shape}")
+        df_perturb = pd.concat([d1, d2])
+        # Extend original graph
+        graph = pd.concat([graph, df_perturb])
+        print(f"Modified PKN shape: {graph.shape}")
+        perturbations = {"Perturbation_POS": 1, "Perturbation_NEG": 1}
 
     print(f"Loaded data:")
     print(f" - Network: {graph.shape}")
