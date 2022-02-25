@@ -71,10 +71,15 @@ class Problem(ABC):
         # Create the variables for the edges
         for row in graph.itertuples():
             edge_name = Problem._edgename(row)
-            vn[f'eU_{edge_name}'] = self.create_binary(f'eU_{edge_name}')
-            vn[f'eD_{edge_name}'] = self.create_binary(f'eD_{edge_name}')
-            # Constraint C3
-            self.add_constraint(vn[f'eU_{edge_name}'] + vn[f'eD_{edge_name}'] <= 1)
+            eu = f"eU_{edge_name}"
+            ed = f"eD_{edge_name}"
+            if eu in vn or ed in vn:
+                print(f"[WARNING] Multiple edges between {edge_name}, ignoring...")
+            else:
+                vn[eu] = self.create_binary(eu)
+                vn[ed] = self.create_binary(ed)
+                # Constraint C3
+                self.add_constraint(vn[eu] + vn[ed] <= 1)
 
         # Add constraints for positive and negative measurements (for the objective function)
         for k, v in measurements.items():
@@ -260,7 +265,13 @@ if __name__ == '__main__':
 
     export_file = args.export if args.export else f"{args.folder}/solution.csv"
     graph = pd.read_csv(os.path.join(args.folder, 'network.csv'), index_col=False)
-    measurements = pd.read_csv(os.path.join(args.folder, 'measurements.csv')).set_index('id').value.to_dict()
+    measurements = pd.read_csv(os.path.join(args.folder, 'measurements.csv')).set_index('id')
+    # Remove measurements not in the graph
+    unodes = set(graph.source).union(graph.target)
+    print(f"There are {len(unodes)} unique species in the PKN")
+    common_species = measurements.index.intersection(list(unodes))
+    print(f"{len(common_species)} measurements included in the PKN ({measurements.shape[0] - len(common_species)} not included in the PKN and discarded)")
+    measurements = measurements.loc[common_species].value.to_dict()
 
     # Check if perturbations is provided:
     pert_file = os.path.join(args.folder, 'perturbations.csv')
