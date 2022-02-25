@@ -253,6 +253,8 @@ if __name__ == '__main__':
                                                                  and perturbations.csv (Px2) in the format 'id, value'")
     parser.add_argument('--penalty', type=float, default=1e-2, help="Regularization penalty for the nodes (default 1e-2)")
     parser.add_argument('--solver', type=str, default='cbc', help="Solver name (cbc, cplex, gurobi, scip, glpk, mosek), default 'cbc'")
+    parser.add_argument('--tol', type=float, default=0.01, help="MIP Gap tolerance")
+    parser.add_argument('--maxtime', type=int, default=600, help="Max time in seconds")
     parser.add_argument('--export', type=str, default=None, help="Path to the file to be exported with the solution (default solution.csv)")
     args = parser.parse_args()
 
@@ -292,6 +294,7 @@ if __name__ == '__main__':
         print(f"Using {args.solver} w/PICOS")
         backend = PicosProblem()
         backend.p.options["solver"] = args.solver
+    backend.setup(timelimit=args.maxtime, opt_tol=args.tol)
     backend.build(graph, measurements, perturbations, penalty=args.penalty)
     backend.solve()
     backend.export(export_file)
