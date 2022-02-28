@@ -149,7 +149,7 @@ class Problem(ABC):
         # Minimize the discrepancies of the measurements (aD vars)
         # Use a penalty on the number of active nodes
         # TODO: Change to a matrix form to accelerate PICOS processing
-        obj1 = sum([float(v)*vn[f'aD_{k}'] for k, v in measurements.items()])
+        obj1 = sum([abs(float(v))*vn[f'aD_{k}'] for k, v in measurements.items()])
         if penalty > 0:
             obj2u = penalty * sum([vn[f'nU_{node}'] for node in set(graph.source) | set(graph.target)])
             obj2d = penalty * sum([vn[f'nD_{node}'] for node in set(graph.source) | set(graph.target)])
@@ -204,12 +204,14 @@ class PicosProblem(Problem):
 
     
 class MIPProblem(Problem):
-    def __init__(self) -> None:
+    def __init__(self, solver=mip.CBC):
+        self.solver_name = solver
         super().__init__()
+        
 
     def create_problem(self):
         # Use Python-MIP only for the integrated CBC solver
-        return  mip.Model("CARNIVAL-PYMIP", solver_name='cbc')
+        return  mip.Model("CARNIVAL-PYMIP", solver_name=self.solver_name)
 
     def add_constraint(self, affine_expression):
         self.p.add_constr(affine_expression)
@@ -283,24 +285,30 @@ if __name__ == '__main__':
         nodes = set(graph.source) - set(graph.target)
         print(f"No perturbations provided, adding {len(nodes)} source nodes")
         # Add +1 and -1 edges
-        d1 = pd.DataFrame(dict(source=["Perturbation_POS"]*len(nodes), interaction=[1]*len(nodes), target=list(nodes)))
-        d2 = pd.DataFrame(dict(source=["Perturbation_NEG"]*len(nodes), interaction=[-1]*len(nodes), target=list(nodes)))
+        d1 = pd.DataFrame(dict(source=["perturbp"]*len(nodes), interaction=[1]*len(nodes), target=list(nodes)))
+        d2 = pd.DataFrame(dict(source=["perturbn"]*len(nodes), interaction=[-1]*len(nodes), target=list(nodes)))
         print(f"Original PKN shape: {graph.shape}")
         df_perturb = pd.concat([d1, d2])
         # Extend original graph
         graph = pd.concat([graph, df_perturb])
         print(f"Modified PKN shape: {graph.shape}")
-        perturbations = {"Perturbation_POS": 1, "Perturbation_NEG": 1}
+        perturbations = {"perturbp": 1, "perturbn": 1}
 
     print(f"Loaded data:")
     print(f" - Network: {graph.shape}")
     print(f" - Measurements: {len(measurements)}")
     print(f" - Perturbations: {len(perturbations)}")
+
+    # Remove strange symbols
+    graph = graph[~graph.source.str.contains('_')]
+    graph = graph[~graph.target.str.contains('_')]
+    print(f"Network size after removing invalid symbols: {graph.shape}")
     
 
-    if args.solver == 'cbc':
+    if args.solver == 'cbc' or args.solver == 'gurobi_mip':
         print("Using CBC solver w/Python-MIP")
-        backend = MIPProblem()
+        solver = mip.CBC if args.solver == 'cbc' else mip.GRB
+        backend = MIPProblem(solver=solver)
     else:
         print(f"Using {args.solver} w/PICOS")
         backend = PicosProblem()

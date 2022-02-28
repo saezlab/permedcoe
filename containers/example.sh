@@ -25,7 +25,9 @@ singularity run --app omnipath toolset/toolset.sif tmpresult/cell_example/networ
 
 #singularity exec -B $CONDA_PREFIX:/opt/env --env "LD_LIBRARY_PATH=/opt/env/" toolset.sif Rscript --vanilla scripts/carnivalr.R --timelimit 60 gurobi /opt/env/bin/gurobi_cl sif.csv tf_906826.csv
 #singularity run --app carnival carnivalpy.sif . --solver cbc --opt_tol 0.1 --export carnival.csv
-singularity run carnivalpy/carnivalpy.sif tmpresult/cell_example cbc 0 0.1 300 /tmp/out.rds cell_data/out.csv
+
+# Params are: <dir with CSVs> <solver name> <penalty> <mip tolerance> <maxtime> <R out file> <CSV out file>
+singularity run -B $CONDA_PREFIX:/opt/env --env "LD_LIBRARY_PATH=/opt/env/" carnivalpy/carnivalpy.sif tmpresult/cell_example gurobi_mip 0.0001 0.1 300 /tmp/out.rds cell_data/out.csv
 
 
 
