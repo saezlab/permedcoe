@@ -293,6 +293,8 @@ if __name__ == '__main__':
         graph = pd.concat([graph, df_perturb])
         print(f"Modified PKN shape: {graph.shape}")
         perturbations = {"perturbp": 1, "perturbn": 1}
+        pd.DataFrame({'id': ['perturbp', 'perturbn'], 'value': [1, 1]}).to_csv(pert_file, index=None)
+        graph.to_csv(os.path.join(args.folder, 'network_with_perturbations.csv'), index=None)
 
     print(f"Loaded data:")
     print(f" - Network: {graph.shape}")

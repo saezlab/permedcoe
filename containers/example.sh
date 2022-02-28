@@ -13,7 +13,6 @@ singularity run --app preprocess toolset/toolset.sif --tsv FALSE --scale TRUE tm
 singularity run --app progeny toolset/toolset.sif --ntop 100 --perms 1 --zscore FALSE --verbose TRUE tmpresult/gex.csv tmpresult/progeny.csv
 
 # Estimate TF activities for the first cell line (column = 906826) using the normalized genes across samples
-mkdir cell_data
 singularity run --app tfenrichment toolset/toolset.sif --export_carnival TRUE --id_col GENE_SYMBOLS --weight_col 906826 tmpresult/gex_n.csv tmpresult/cell_example/measurements.csv
 
 # Get SIF from omnipath

@@ -11,4 +11,11 @@ outfile2=$7
 tmp_dir=$(mktemp -d)
 cp -R ${data_dir}/* ${tmp_dir}/
 /opt/miniconda/bin/python /opt/carnival/carnivalpy/carnival.py $tmp_dir --solver $solver_name --penalty $penalty --maxtime $maxtime --tol $tol --export ${tmp_dir}/solution.csv
+
+if [[ -f "${tmp_dir}/network_with_perturbations.csv"]]; then
+    mv ${tmp_dir}/network.csv ${tmp_dir}/old_network.csv
+    mv ${tmp_dir}/network_with_perturbations.csv ${tmp_dir}/network.csv
+fi
+
+
 Rscript --vanilla /opt/export.R $tmp_dir $outfile $outfile2
