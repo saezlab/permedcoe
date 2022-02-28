@@ -12,7 +12,7 @@ arguments <- parse_args(parser, positional_arguments = T)
 
 source("/opt/carnival/carnivalpy/export.R")
 sol <- export_folder(arguments$args[1])
-saveRDS(sol, arguments$args[2])
-df<-data.frame(sol$nodesAttributes$AvgAct/100, row.names=sol$nodesAttributes$Node)
+df <- data.frame(sol$nodesAttributes$AvgAct/100, row.names=sol$nodesAttributes$Node)
 write.csv(df, file=arguments$args[3])
+saveRDS(sol, file=arguments$args[2])
 

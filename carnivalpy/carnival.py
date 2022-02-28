@@ -315,7 +315,7 @@ if __name__ == '__main__':
         print(f"Using {args.solver} w/PICOS")
         backend = PicosProblem()
         backend.p.options["solver"] = args.solver
-    backend.setup(timelimit=args.maxtime, opt_tol=args.tol)
+    backend.setup(max_seconds=args.maxtime, opt_tol=args.tol)
     backend.build(graph, measurements, perturbations, penalty=args.penalty)
     backend.solve()
     backend.export(export_file)
