@@ -181,7 +181,7 @@ class PicosProblem(Problem):
         else:
             self.p.options["verbosity"] = 1
         if "max_seconds" in kwargs:
-            self.p.options["timelimit"] = kwargs["timelimit"]
+            self.p.options["timelimit"] = kwargs["max_seconds"]
         else:
             self.p.options["timelimit"] = None
         if "opt_tol" in kwargs:
