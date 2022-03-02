@@ -11,22 +11,22 @@ readarray -t cells < cell_list_full.txt
 echo "A total of ${#cells[@]} cells will be processed"
 
 # Download gene expression data from GDSC. Remove the DATA. prefix from the columns
-if [! -f ${tmpdir}/gex.csv ]; then
+if [ ! -f ${tmpdir}/gex.csv ]; then
     singularity run --app preprocess toolset/toolset.sif --tsv TRUE https://www.cancerrxgene.org/gdsc1000/GDSC1000_WebResources/Data/preprocessed/Cell_line_RMA_proc_basalExp.txt.zip --remove DATA. ${tmpdir}/gex.csv
 fi
 
 # Do the same but this time scale also genes across cell lines
-if [! -f ${tmpdir}/gex_n.csv ]; then
+if [ ! -f ${tmpdir}/gex_n.csv ]; then
     singularity run --app preprocess toolset/toolset.sif --tsv FALSE --scale TRUE ${tmpdir}/gex.csv ${tmpdir}/gex_n.csv
 fi
 
 # Use the gene expressoin data to run Progeny and estimate pathway activities
-if [! -f ${tmpdir}/progeny.csv ]; then
+if [ ! -f ${tmpdir}/progeny.csv ]; then
     singularity run --app progeny toolset/toolset.sif --ntop 100 --perms 1 --zscore FALSE --verbose TRUE ${tmpdir}/gex.csv ${tmpdir}/progeny.csv
 fi
 
 # Get SIF from omnipath
-if [! -f ${tmpdir}/network.csv ]; then
+if [ ! -f ${tmpdir}/network.csv ]; then
     singularity run --app omnipath toolset/toolset.sif ${tmpdir}/network.csv
 fi
 
