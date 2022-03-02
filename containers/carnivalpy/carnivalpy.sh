@@ -20,3 +20,5 @@ fi
 
 
 Rscript --vanilla /opt/export.R $tmp_dir $outfile $outfile2
+
+rm -rf ${tmp_dir}

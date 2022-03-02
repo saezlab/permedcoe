@@ -7,6 +7,7 @@ From: pablormier/permedcoe/saeztools:1.0.0
 %files
     ./carnivalpy.sh /opt
     ./export.R /opt
+    ./feature_merge.py /opt
 
 %post
     apt -y install git wget
@@ -15,7 +16,7 @@ From: pablormier/permedcoe/saeztools:1.0.0
     bash /opt/miniconda.sh -b -p /opt/miniconda
     eval "$(/opt/miniconda/bin/conda shell.bash hook)"
     conda init
-    conda install -y -c gurobi gurobi=9.5.1
+    conda install -y -c gurobi gurobi=9.5.0
     conda install -y pandas=1.3.5 tqdm
     pip install mip==1.13.0 PICOS==2.4.1 swiglpk==5.0.4 Mosek==9.3.15
     git clone https://github.com/saezlab/permedcoe.git /opt/carnival
@@ -25,6 +26,10 @@ From: pablormier/permedcoe/saeztools:1.0.0
 
 %runscript
     exec /opt/carnivalpy.sh "${@}"
+
+
+%apprun feature_merger
+    exec /opt/miniconda/bin/python /opt/feature_merge.py "${@}"    
 
 
 %test
