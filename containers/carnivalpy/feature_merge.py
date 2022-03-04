@@ -21,14 +21,21 @@ if __name__ == '__main__':
         print(f"Loaded {len(feats)} features from {args.feature_file}")
 
     dataframes = []
+    missing = 0
     for s in samples:
         print(f"Processing {s}...")
-        df = pd.read_csv(os.path.join(args.folder, s, 'carnival.csv'))
-        df.set_index(df.columns[0], inplace = True)
-        df.rename(columns={df.columns[0]: s}, inplace = True)
-        dataframes.append(df)
+        fpath = os.path.join(args.folder, s, 'carnival.csv')
+        if os.path.exists(fpath):
+            df = pd.read_csv(fpath)
+            df.set_index(df.columns[0], inplace = True)
+            df.rename(columns={df.columns[0]: s}, inplace = True)
+            dataframes.append(df)
+        else:
+            print("Missing carnival.csv file")
+            missing += 1
     df_result = pd.concat(dataframes, axis=1, verify_integrity=True).T
     df_result.index = df_result.index.astype(str)
+    print(f"Missing samples: {missing}")
     print(f"Features merged, shape: {df_result.shape}")
     if feats:
         df_result = df_result.loc[:, feats]
@@ -38,7 +45,8 @@ if __name__ == '__main__':
         df_ext.set_index(args.merge_csv_index, inplace=True)
         df_ext = df_ext.add_prefix(args.merge_csv_prefix)
         print(df_ext)
-        df_ext = df_ext.loc[samples, :]
+        common = df_ext.index.intersection(samples)
+        df_ext = df_ext.loc[common, :]
         print(f"Loaded csv from {args.merge_csv_file}, shape: {df_ext.shape}")
         df_result = df_result.join(df_ext)
         print(f"Features merged with external csv, new shape: {df_result.shape}")

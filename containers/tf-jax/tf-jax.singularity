@@ -6,7 +6,7 @@ From: continuumio/miniconda3:4.10.3
     ./ml.py /opt
 
 %post
-    /opt/conda/bin/conda install -y pandas tensorflow=2.4.1 tqdm
+    /opt/conda/bin/conda install -y pandas tqdm
     /opt/conda/bin/conda install -c conda-forge jax=0.2.21
     /opt/conda/bin/pip install iterative-stratification
 

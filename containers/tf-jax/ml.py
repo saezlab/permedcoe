@@ -272,10 +272,23 @@ if __name__ == "__main__":
             row_features = df_drug_test.to_numpy() if df_drug_test is not None else None
             col_features = df_cell_test.to_numpy() if df_cell_test is not None else None
             X_hat = predict(params, row_features=row_features, col_features=col_features)
+            # Calculate baseline
+            if row_features is not None and col_features is None:
+                # Unknown drugs, known cells
+                mean_cols = df_response_train.mean(axis=0).fillna(df_response_train.mean().mean())
+                X_baseline = pd.concat([mean_cols]*X_hat.shape[0], axis=1).to_numpy().T
+            elif row_features is None and col_features is not None:
+                # Unknown cells, known drugs
+                mean_rows = df_response_train.mean(axis=1)
+                X_baseline = pd.concat([mean_rows]*X_hat.shape[1], axis=1).to_numpy()
+            elif row_features is not None and col_features is not None:
+                # For unknown rows/features for which we dont IC50 values, baseline prediction is just
+                # the average of the log(IC50) in the training set.
+                X_baseline = np.full_like(X_hat, df_response_train.mean().mean())
             X = df_response_test.to_numpy()
             print(f'Test prediction shape: {X_hat.shape}')
             e = loss_mse(X, X_hat)
-            eb = loss_mse(X, np.full_like(X_hat, df_response_train.mean().mean()))
+            eb = loss_mse(X, X_baseline)
             rsq = r2(X, X_hat)
             print(f"MSE_test: {e:.4f}, R2_test: {rsq:.4f}, MSE_baseline: {eb:.4f}")
         print(f"Exporting model to {args.output_file}...")
