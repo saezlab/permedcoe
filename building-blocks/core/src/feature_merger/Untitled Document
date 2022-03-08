@@ -1,0 +1,1 @@
+exec /opt/miniconda/bin/python /opt/feature_merge.py "${@}"
