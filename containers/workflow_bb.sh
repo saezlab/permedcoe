@@ -17,12 +17,12 @@ if [ ! -f ${tmpdir}/gex.csv ]; then
     wget -O ${tmpdir}/gdsc_gex.zip https://www.cancerrxgene.org/gdsc1000/GDSC1000_WebResources/Data/preprocessed/Cell_line_RMA_proc_basalExp.txt.zip
     unzip gdsc_gex.zip -d ${tmpdir}/
     # ['input_file', 'col_genes', 'exclude_cols', 'scale', 'tsv', 'verbose', 'remove']
-    preprocess_bb -i ${tmpdir}/Cell_line_RMA_proc_basalExp.txt GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o ${tmpdir}/gex.csv
+    carnival_gex_preprocess_bb -i ${tmpdir}/Cell_line_RMA_proc_basalExp.txt GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o ${tmpdir}/gex.csv
 fi
 
 # Do the same but this time scale also genes across cell lines
 if [ ! -f ${tmpdir}/gex_n.csv ]; then
-    preprocess_bb -i ${tmpdir}/Cell_line_RMA_proc_basalExp.txt GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o ${tmpdir}/gex_n.csv
+    carnival_gex_preprocess_bb -i ${tmpdir}/Cell_line_RMA_proc_basalExp.txt GENE_SYMBOLS GENE_title FALSE TRUE TRUE DATA. -o ${tmpdir}/gex_n.csv
 fi
 
 rm ${tmpdir}/Cell_line_RMA_proc_basalExp.txt
