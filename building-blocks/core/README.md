@@ -34,12 +34,12 @@ from the system.
 
 ## Export BB
 
-The `export_bb` building block converts from the csv files required by CARNIVAL (the PKN .sif file, the measurements csv file, and the perturbations or inputs csv file) to a hdf5 format required by the refactored version of CARNIVAL.
+The `export_solver_hdf5_bb` building block converts from the csv files required by CARNIVAL (the PKN .sif file, the measurements csv file, and the perturbations or inputs csv file) to a hdf5 format required by the refactored version of CARNIVAL.
 
 Example usage:
 
 ```
-export_bb -i sif.csv measurements.csv inputs.csv TRUE -o file.h5
+export_solver_hdf5_bb -i sif.csv measurements.csv inputs.csv TRUE -o file.h5
 ```
 
 [Here](https://github.com/saezlab/permedcoe/tree/master/containers/toolset/scripts/examples/export) there is toy data to try.
@@ -145,14 +145,14 @@ tfenrichment -i gex.csv DATA.906826 GENE_SYMBOLS tf FALSE 10 'A,B,C' TRUE -o 906
 
 ## ML Building Block
 
-The `ml_bb` building block implements the Matrix Factorization approach for prediction of target values with or without side features using [JAX](https://github.com/google/jax). This is a wrapper for https://github.com/saezlab/permedcoe/blob/master/containers/tf-jax/ml.py. This can be used to predict e.g drug responses on cell lines from partial observations of drug/cell responses.
+The `ml_jax_drug_prediction_bb` building block implements the Matrix Factorization approach for prediction of target values with or without side features using [JAX](https://github.com/google/jax). This is a wrapper for https://github.com/saezlab/permedcoe/blob/master/containers/tf-jax/ml.py. This can be used to predict e.g drug responses on cell lines from partial observations of drug/cell responses.
 
 There are two ways of using the building block. For training mode and for inference mode.
 
 Training mode:
 
 ```
-ml_bb -i <response csv> <row features csv> <col features csv> <epochs> <ADAM Learning rate> <regularization> <latent size> <test proportion rows> <test proportion cols> -o <npz model>
+ml_jax_drug_prediction_bb -i <response csv> <row features csv> <col features csv> <epochs> <ADAM Learning rate> <regularization> <latent size> <test proportion rows> <test proportion cols> -o <npz model>
 ```
 
 * `<response csv>`: CSV with the matrix to predict (e.g IC50 drug/cell responses) for training (see [this](https://raw.githubusercontent.com/saezlab/Macau_project_1/master/DATA/IC50) example). If the file is a `.npz` file, then the model is imported and this is run in inference mode for predictions. If `.x` is provided, the example file is used.
@@ -168,13 +168,13 @@ ml_bb -i <response csv> <row features csv> <col features csv> <epochs> <ADAM Lea
 Example (using example files):
 
 ```
-ml_bb -i .x .x .x 200 0.1 0.001 10 0.1 0.1 -o model.npz
+ml_jax_drug_prediction_bb -i .x .x .x 200 0.1 0.001 10 0.1 0.1 -o model.npz
 ```
 
 For prediction using a `model.npz` file:
 
 ```
-ml_bb -i .x drug_features.csv cell_features.csv 0 0 0 0 0 0 -o predictions.csv
+ml_jax_drug_prediction_bb -i .x drug_features.csv cell_features.csv 0 0 0 0 0 0 -o predictions.csv
 ```
 
 

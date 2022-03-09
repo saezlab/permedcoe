@@ -62,11 +62,11 @@ do
 done
 
 # Merge the features into a single CSV, focus only on some specific genes
-feature_merger_bb -i ${tmpdir} ${tmpdir}/progeny.csv data/genelist.txt -o cell_features.csv
+carnival_feature_merger_bb -i ${tmpdir} ${tmpdir}/progeny.csv data/genelist.txt -o cell_features.csv
 
 # Train a model to predict IC50 values for unknown cells (using the progeny+carnival features) and known drugs
 # singularity run --app ml tf-jax/tf-jax.sif --drug_features .none --cell_features cell_features.csv --test_cells 0.1 --reg 0.01 .x model.npz
-ml_bb -i .x .none cell_features.csv 200 0.1 0.001 10 0.1 0.1 -o model.npz
+ml_jax_drug_prediction -i .x .none cell_features.csv 200 0.1 0.001 10 0.1 0.1 -o model.npz
 
 
 
