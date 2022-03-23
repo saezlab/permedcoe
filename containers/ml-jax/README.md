@@ -5,15 +5,15 @@ This container implements different matrix factorization strategies using option
 ## Get the container
 
 ```
-> singularity pull library://pablormier/permedcoe/tf-jax:1.0.0
+singularity pull library://pablormier/permedcoe/ml-jax:1.0.0
 ```
 
 ## Build (and sign) the container
-
+The container is made for x86 CPUs and the jax installation needs a CPU with AVX support. This is because the jaxlib wheel was build on a system with AVX support. Mac M1 notebooks don't fullfill these requirements.
 
 ```
-> sudo singularity build tf-jax.sif tf-jax.singularity
-> singularity sign --keyidx N tf-jax.sif
+sudo singularity build ml-jax.sif ml-jax.singularity
+singularity sign --keyidx N ml-jax.sif
 ```
 NOTE: For signing the container make sure that you have created your keys first. Please see https://sylabs.io/guides/3.0/user-guide/signNverify.html for more info.
 
@@ -21,7 +21,7 @@ NOTE: For signing the container make sure that you have created your keys first.
 
 
 ```
-singularity run --app ml tf-jax.sif [-h] [--drug_features DRUG_FEATURES] [--cell_features CELL_FEATURES] [--epochs EPOCHS] 
+singularity run --app ml ml-jax.sif [-h] [--drug_features DRUG_FEATURES] [--cell_features CELL_FEATURES] [--epochs EPOCHS] 
                                     [--adam_lr ADAM_LR] [--reg REG] [--test_drugs TEST_DRUGS] [--test_cells TEST_CELLS] [--latent_size LATENT_SIZE]
                                     input_file output_file
 ```
@@ -40,11 +40,11 @@ singularity run --app ml tf-jax.sif [-h] [--drug_features DRUG_FEATURES] [--cell
 Example using the default data, and exporting the trained model to the `model.npz` file:
 
 ```
-> singularity run --app ml tf-jax.sif --drug_features .x --cell_features .x --test_drugs 0.1 --test_cells 0.1 --reg 0.01 .x model.npz
+singularity run --app ml ml-jax.sif --drug_features .x --cell_features .x --test_drugs 0.1 --test_cells 0.1 --reg 0.01 .x model.npz
 ```
 
 Make predictions:
 
 ```
-> singularity run --app ml tf-jax.sif --drug_features .x --cell_features .x model.npz result.csv
+singularity run --app ml ml-jax.sif --drug_features .x --cell_features .x model.npz result.csv
 ```
