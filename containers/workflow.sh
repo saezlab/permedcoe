@@ -49,6 +49,7 @@ do
         # in the contaner and the LD_LIBRARY_PATH is changed accordingly so the lib can find the gurobi files. Note that Gurobi needs a valid license for this.        
         # CarnivalPy params are: <dir with CSVs> <solver name> <penalty> <mip tolerance> <maxtime> <R out file> <CSV out file>
         singularity run -B $CONDA_PREFIX:/opt/env --env "LD_LIBRARY_PATH=/opt/env/" carnivalpy/carnivalpy.sif ${tmpdir}/${cell} gurobi_mip 0 0.1 300 ${tmpdir}/${cell}/out.rds ${tmpdir}/${cell}/carnival.csv
+        #singularity run carnivalpy/carnivalpy.sif ${tmpdir}/${cell} cbc 0 0.1 300 ${tmpdir}/${cell}/out.rds ${tmpdir}/${cell}/carnival.csv
         rm ${tmpdir}/${cell}/network.csv
         rm ${tmpdir}/${cell}/out.rds
     fi
@@ -58,7 +59,7 @@ done
 singularity run --app feature_merger carnivalpy/carnivalpy.sif --merge_csv_file ${tmpdir}/progeny.csv --feature_file data/genelist.txt ${tmpdir} cell_features.csv
 
 # Train a model to predict IC50 values for unknown cells (using the progeny+carnival features) and known drugs
-singularity run --app ml tf-jax/tf-jax.sif --drug_features .none --cell_features cell_features.csv --test_cells 0.1 --reg 0.01 .x model.npz
+singularity run --app ml ml-jax/ml-jax.sif --drug_features .none --cell_features cell_features.csv --test_cells 0.1 --reg 0.01 .x model.npz
 
 
 
