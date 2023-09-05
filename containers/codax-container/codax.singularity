@@ -1,0 +1,29 @@
+Bootstrap: docker
+
+From: continuumio/miniconda3:4.10.3
+
+%files
+    ./codax_script.py /opt
+
+%post
+    /opt/conda/bin/conda install -y python=3.8 jax=0.3.25 pygraphviz=1.9 jupyter=1.0.0 -c conda-forge
+    /opt/conda/bin/pip install git+https://github.com/saezlab/codax.git
+
+%runscript
+    exec /opt/conda/bin/"$@"
+
+
+%apprun ml
+    exec /opt/conda/bin/python /opt/codax_script.py "${@}"
+
+
+%test
+    if /opt/conda/bin/python -c "import jax; print(jax.__version__)" | grep -q "0.3.25"; then
+        echo "JAX correctly installed"
+    else
+        echo "There is an issue with JAX installation!"
+    fi
+
+
+
+
