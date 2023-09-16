@@ -8,12 +8,13 @@ From: continuumio/miniconda3:4.10.3
 %post
     /opt/conda/bin/conda install -y python=3.8 jax=0.3.25 pygraphviz=1.9 jupyter=1.0.0 -c conda-forge
     /opt/conda/bin/pip install git+https://github.com/saezlab/codax.git
+    chmod 755 -R /opt
 
 %runscript
     exec /opt/conda/bin/"$@"
 
 
-%apprun ml
+%apprun codax
     exec /opt/conda/bin/python /opt/codax_script.py "${@}"
 
 

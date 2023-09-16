@@ -1,19 +1,19 @@
-# ML container for Matrix Factorization using JAX
+# GPU-enabled Logic ODE for signaling using Neural ODEs
 
-This container implements different matrix factorization strategies using optional side information (drug features and cell features) for the prediction of IC50 values. This container can be used for example to train a model for the prediction IC50 responses for new cells using known drugs, the potency of a new drug on known cell lines, or the prediction of new drug/cell responses.
+[CODAX](https://github.com/saezlab/codax) is a new tool to accelerate the training of dynamic models of cell signaling using mechanistic logic ODEs on the GPU and CPU.
 
 ## Get the container
 
 ```
-singularity pull library://pablormier/permedcoe/ml-jax:1.0.0
+singularity pull library://pablormier/permedcoe/codax:1.0.0
 ```
 
 ## Build (and sign) the container
 The container is made for x86 CPUs and the jax installation needs a CPU with AVX support. This is because the jaxlib wheel was build on a system with AVX support. Mac M1 notebooks don't fullfill these requirements.
 
 ```
-sudo singularity build ml-jax.sif ml-jax.singularity
-singularity sign --keyidx N ml-jax.sif
+sudo singularity build codax.sif codax.singularity
+singularity sign --keyidx N codax.sif
 ```
 NOTE: For signing the container make sure that you have created your keys first. Please see https://sylabs.io/guides/3.0/user-guide/signNverify.html for more info.
 
@@ -21,30 +21,43 @@ NOTE: For signing the container make sure that you have created your keys first.
 
 
 ```
-singularity run --app ml ml-jax.sif [-h] [--drug_features DRUG_FEATURES] [--cell_features CELL_FEATURES] [--epochs EPOCHS] 
-                                    [--adam_lr ADAM_LR] [--reg REG] [--test_drugs TEST_DRUGS] [--test_cells TEST_CELLS] [--latent_size LATENT_SIZE]
-                                    input_file output_file
-```
-- `input_file`: csv containing the response matrix (drugs x cells) with the IC50 values or npz model with the trained parameters. Provide `.x` to use the default example data to train a model. If the extension ends with `.npz`, instead of training, it runs in inference mode and predicts the drugs x cells matrix from the provided features.
-- `output_file`: file with the trained parameters (e.g `model.npz`) or csv file to export the predictions if the model runs in inference mode.
-- `-h`: show description of the arguments
-- `--drug_features`: csv containing the drug features (drug x features matrix). Provide `.x` to use [default example data](https://raw.githubusercontent.com/saezlab/Macau_project_1/master/DATA/target), or `.none` to ignore the use of drug features.
-- `--cell_features`: csv containing the cell features (cell x features matrix). Provide `.x` to use [default example data](https://raw.githubusercontent.com/saezlab/Macau_project_1/master/DATA/progeny11), or `.none` to ignore the use of cell features.
-- `--epochs`: Number of iterations for training the model. Default = 200.
-- `--adam_lr`: Learning rate for the ADAM optimizar. Default = 0.1.
-- `--reg`: l2 regularization weight. Default = 0.01.
-- `--test_drugs`: proportion of drugs to remove from the training to test the model (only applicable if drug features are provided). Default = 0.1.
-- `--test_cells`: proportion of cells to remove from the training to test the model (only applicable if cell features are provided). Default = 0.1.
-- `--latent_size`: size of the latent vector. Default = 10.
-
-Example using the default data, and exporting the trained model to the `model.npz` file:
-
-```
-singularity run --app ml ml-jax.sif --drug_features .x --cell_features .x --test_drugs 0.1 --test_cells 0.1 --reg 0.01 .x model.npz
+singularity run --app codax codax.sif [-h] [--sim_time_start SECONDS] [--sime_time_end SECONDS] [--sime_time_steps SECONDS] 
+                                      [--load_params PICKLE_FILE] [--perturbs CSV_FILE] [--output_model FILE] 
+                                      [--output_sim FILE] [--iters NUM_ITERS] [--lr LEARNING_RATE] [--fig FIG] [--figname FILE]
+                                      sif_file midas_data_file
 ```
 
-Make predictions:
+- `sim_time_start`: seconds at which the simulation starts (default=0)
+- `sim_time_end`: seconds at which the simulation stops (default=10)
+- `sim_time_steps`: Number of timepoints linearly spaced between start and end (default=10)
+- `load_params`: File with a pretrained model (pkl file) to use.
+- `perturbs`: File containing a list of perturbations, where each file is a parameter and the new value, e.g.: `TNFa_n_NFkB, 0`.
+- `output_model`: File to store the trained model (default='model.pkl')
+- `output_sim`: File containing the output of a simulation, for example using `perturbs` file on a trained model (default='sim.pkl')
+- `iters`: Number of iteration steps for the Neural ODE (default=500)
+- `lr`: Learning rate for the gradient descent method (default=1e-3)
+- `fig`: 1 to generate a png file with the simulation, 0 otherwise (default=1)
+- `figname`: name of the file for the figure with the simulated data, only applies if `--fig 1` (default='sim.png')
+
+Example using the default data:
 
 ```
-singularity run --app ml ml-jax.sif --drug_features .x --cell_features .x model.npz result.csv
+singularity run -W . --app codax codax.sif --output_model 'model.pkl' --figname 'sim.png' . .
+```
+
+After training a model, it can be used to simulate interventions:
+
+```
+singularity run -W . --app codax codax.sif --load_params example/params.pkl --perturbs example/pert.txt
+```
+
+Running an example included in the repository:
+
+```
+# Let's train dynamic signaling model with CODAX. We need an experimental setting file and a network SIF file
+cat example/MD-test.csv
+cat example/PKN-test.sif
+./codax.sh --output_model model.pkl --figname sim.png example/PKN-test.sif example/MD-test.csv
+# Now let's use the trained model and do some perturbation to predict the effects on signaling
+./codax.sh --load_params model.pkl --perturbs example/pert.txt example/PKN-test.sif example/MD-test.csv
 ```

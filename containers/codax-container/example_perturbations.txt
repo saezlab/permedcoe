@@ -1,2 +1,0 @@
-TGFa_k_PI3K, 0
-TGFa_k_Raf, 0

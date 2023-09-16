@@ -70,14 +70,14 @@ if __name__ == "__main__":
     parser.add_argument('data_file', type=str, help='MIDAS data file with the experimental conditions')
     parser.add_argument('--sim_time_start', type=int, default=0, help='Starting time for simulation')
     parser.add_argument('--sim_time_end', type=int, default=10, help='Ending time for simulation')
-    parser.add_argument('--sim_time_steps', type=int, default=10, help='Time steps')
+    parser.add_argument('--sim_time_steps', type=int, default=10, help='Number of linearly spaced time points')
     parser.add_argument('--load_params', type=str, default="", help='Pickle file with the parameters of the dynamic model')
     parser.add_argument('--perturbs', type=str, default="", help='A file (csv) with perturbations, where keys are param names')
     parser.add_argument('--output_model', type=str, default="model.pkl", help='File to store the trained model')
     parser.add_argument('--output_sim', type=str, default="sim.pkl", help='File to store the simulation result')
     parser.add_argument('--iters', type=int, default=500, help='Number of iterations for training')
     parser.add_argument('--lr', type=float, default=1e-3, help='Learning rate for ADAM optimizer')
-    parser.add_argument('--fig', type=int, default=1, help='Number of iterations for training')
+    parser.add_argument('--fig', type=int, default=1, help='Generate an output figure')
     parser.add_argument('--figname', type=str, default='sim.png', help='Name of the figure with the simulation of the model on training data')
     args = parser.parse_args()
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     if is_url(args.sif_file):
         sif_file = download_file(args.sif_file)
     else:
-        sif_file = parser.sif_file
+        sif_file = args.sif_file
 
     print("SIF:", sif_file)
     if is_url(args.data_file):
@@ -115,15 +115,32 @@ if __name__ == "__main__":
         for k, v in opt_params_dict.items():
             print(f"{k:<15}: {v}")
 
+        sim_res0 = None 
         if len(args.perturbs) > 0:
             with open(args.perturbs, 'r') as f:
                 perts = {key.strip(): float(value) for key, value in (line.strip().split(', ') for line in f)}
             print(f"Injecting the following perturbations from {args.perturbs}:")
             for k, v in perts.items():
                 print(f"{k:<15}: {v}")
-            opt_params_dict.update(perts)
             
-        sim_res = c.simulate(ODEparameters=opt_params_dict, timepoints=tsteps, plot_simulation=True)
+            print("Simulating control...")
+            sim_res0 = c.simulate(ODEparameters=opt_params_dict, timepoints=tsteps, plot_simulation=True)
+            opt_params_dict.update(perts)
+        print("Simulating perturbation...")
+        sim_res = c.simulate(ODEparameters=opt_params_dict, timepoints=tsteps, plot_simulation=True) 
+
+        # Compare conditions
+        if sim_res0 is not None:
+            #print(len(c.states), len(sim_res))
+            for istate in range(len(c.states)):
+                for icond in range(len(sim_res0)):
+                    x0, y0 = np.array(sim_res0[icond].ts), np.array(sim_res0[icond].ys[:, istate])
+                    xp, yp = np.array(sim_res[icond].ts), np.array(sim_res[icond].ys[:, istate])
+                    y0_m = np.median(y0)
+                    yp_m = np.median(yp)
+                    if np.abs(y0_m - yp_m) >= 1e-3:
+                        print(f"{c.states[icond]:<10} C{istate}, diff median values: ctrl={y0_m:.3f} / pert={yp_m:.3f}")      
+            
         if args.fig > 0:    
             plt.savefig(args.figname)
 
