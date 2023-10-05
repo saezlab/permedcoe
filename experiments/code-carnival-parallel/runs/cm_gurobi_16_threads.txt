@@ -1,0 +1,208 @@
+Installed version: v0.9.2-beta.1 (latest: v0.9.1-alpha.3)
+Available backends: CVXPY v1.3.2
+Default backend (corneto.K): CVXPY
+Installed solvers: ECOS, ECOS_BB, GUROBI, OSQP, SCIPY, SCS
+Graphviz version: Graphviz not installed. To support plotting, please install graphviz with conda
+Repository: https://github.com/saezlab/corneto
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+Set parameter ServerPassword
+Set parameter GURO_PAR_SPECIAL
+Set parameter TokenServer to value "bq-lic01"
+[(1, 257.3966906070709), (2, 144.8137035369873), (4, 84.86922788619995), (8, 66.46262097358704), (16, 60.82855248451233), (32, 65.58521771430969)]
